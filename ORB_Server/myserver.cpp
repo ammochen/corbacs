@@ -1,6 +1,7 @@
 #pragma warning(disable:4996)
 
 #include <iostream>
+#include <fstream>
 #include "hello.hh"
 
 using namespace std;
@@ -13,7 +14,7 @@ public:
 
 short Time_impl::get_gmt() 
 {
-	return 33445;
+	return 3325;
 }
 
 int main(int argc, char* argv[]) 
@@ -30,6 +31,15 @@ int main(int argc, char* argv[])
 		Time_impl time_servant;
 		Time_var tm = time_servant._this();
 		CORBA::String_var str = orb->object_to_string(tm);
+
+		// WriteIOR to file
+		ofstream out("ior.txt");
+		if (out.is_open())
+		{
+			out << str;
+			out.close();
+		}
+
 		cout << str << endl;
 		orb->run();
 	}

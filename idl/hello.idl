@@ -1,0 +1,5 @@
+interface Time{
+
+    short get_gmt();
+
+};

@@ -1,6 +1,6 @@
 #pragma warning(disable:4996)
 #include <iostream>
-
+#include <fstream>
 #include "hello.hh"
 
 using namespace std;
@@ -12,11 +12,25 @@ int main(int argc, char* argv[])
 	{
 		if (argc != 2) 
 		{
-			throw 0;
+			//throw 0;
 		}
 
 		CORBA::ORB_var orb = CORBA::ORB_init(argc, argv);
-		CORBA::Object_var obj = orb->string_to_object(argv[1]);
+
+		// Read IOR from file ior.txt
+		char bufferIOR[500];
+		ifstream in("ior.txt");
+		if (!in.is_open())
+		{
+			cout << "Error opening file"; exit(1);
+		}
+		while (!in.eof())
+		{
+			in.getline(bufferIOR, 500);
+			cout << "Read IOR from file!" << endl;
+		}
+
+		CORBA::Object_var obj = orb->string_to_object(bufferIOR);
 
 		if (CORBA::is_nil(obj)) 
 		{
@@ -33,6 +47,8 @@ int main(int argc, char* argv[])
 		}
 
 		cout << "Get from server, Time is:" << tm->get_gmt() << endl;
+
+		system("pause");
 	}
 	catch (const CORBA::Exception&) 
 	{
