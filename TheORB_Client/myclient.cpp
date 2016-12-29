@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int main(int argc, char* argv[]) 
+int mainXXX(int argc, char* argv[]) 
 {
 
 	try 
@@ -57,4 +57,58 @@ int main(int argc, char* argv[])
 	}
 
 	return 0;
+}
+
+int main(int argc, char* argv[])
+{
+	// Declare ORB
+	CORBA::ORB_var orb;
+
+	try
+	{
+		if (argc !=2)
+		{
+			//throw 0;
+		}
+
+		// Initialize the ORB
+		orb = CORBA::ORB_init(argc, argv);
+
+		// Get a reference to the Naming Service
+		CORBA::Object_var rootContextObj = orb->resolve_initial_references("NameService");
+
+		if (CORBA::is_nil(rootContextObj))
+		{
+			cerr << "Nil Time reference" << endl;
+			throw 0;
+		}
+
+		CosNaming::NamingContext_var nc = CosNaming::NamingContext::_narrow(rootContextObj.in());
+
+		CosNaming::Name name;
+		name.length(1);
+		name[0].id = (const char *)"FirstTimeService";
+		name[0].kind = (const char *)"";
+
+		// Invoke the root context to retrieve the object refernce
+		CORBA::Object_var managerObj = nc->resolve(name);
+
+		// Narrow the previous object to obtain the correct type
+		::Time_var manager = ::Time::_narrow(managerObj.in());
+
+		if (CORBA::is_nil(manager))
+		{
+			cerr << "Nil Time reference" << endl;
+			throw 0;
+		}
+
+		cout << "OK, Let's have a look: " << manager->get_gmt() << endl;
+	}
+	catch (const CORBA::Exception& e)
+	{
+		cerr << "Client.main() Exception:" << e._name() << endl;
+		return 1;
+	}
+
+
 }
